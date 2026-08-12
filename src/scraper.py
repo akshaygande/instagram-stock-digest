@@ -35,22 +35,35 @@ class InstagramScraper:
         self._login()
 
     def _login(self):
-        """Log in using saved session, or fresh credentials if no session exists."""
+        """
+        Load login session from file ONLY.
+
+        We never attempt a fresh username/password login from CI because
+        GitHub Actions runs on datacenter IPs that always trigger Instagram's
+        security checkpoint. Instead, generate the session once on your local
+        Mac and commit state/ig_session to the repo.
+
+        See README → Troubleshooting → 'Regenerating the Instagram session'.
+        """
         session_path = Path(self.session_file)
 
-        if session_path.exists():
-            try:
-                self.loader.load_session_from_file(self.username, str(session_path))
-                logger.info(f"✅ Loaded saved session for @{self.username}")
-                return
-            except Exception as e:
-                logger.warning(f"Session load failed ({e}), doing fresh login...")
+        if not session_path.exists():
+            raise FileNotFoundError(
+                f"Instagram session file not found at '{self.session_file}'. "
+                "You must generate it locally on your Mac first. "
+                "Run: instaloader --login YOUR_USERNAME  "
+                "then copy ~/.config/instaloader/session-YOUR_USERNAME to state/ig_session and push."
+            )
 
-        logger.info(f"🔐 Logging in as @{self.username}...")
-        self.loader.login(self.username, self.password)
-        session_path.parent.mkdir(parents=True, exist_ok=True)
-        self.loader.save_session_to_file(str(session_path))
-        logger.info("✅ Logged in and session saved")
+        try:
+            self.loader.load_session_from_file(self.username, str(session_path))
+            logger.info(f"✅ Session loaded for @{self.username}")
+        except Exception as e:
+            raise RuntimeError(
+                f"Instagram session is invalid or expired for @{self.username}: {e}. "
+                "Regenerate it locally: instaloader --login YOUR_USERNAME, "
+                "then copy the session file back to state/ig_session and push."
+            ) from e
 
     def _download_video(self, video_url: str, shortcode: str) -> str | None:
         """Download a reel video to a temp file. Returns path or None on failure."""

@@ -1,12 +1,14 @@
 """
 Summarize scraped Instagram content using Google Gemini 1.5 Flash (free API tier).
 Free tier: 1,500 requests/day | 1M tokens/day — more than enough for daily digests.
+
+Uses the new google-genai SDK (google.generativeai is deprecated as of 2025).
 """
 
 import logging
-from datetime import datetime
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
@@ -86,11 +88,7 @@ def summarize(posts: list[dict], api_key: str) -> str:
     Send all scraped content to Gemini and return the formatted digest.
     Returns a 'no content' message if there are no new posts.
     """
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        model_name=MODEL_NAME,
-        system_instruction=SYSTEM_PROMPT,
-    )
+    client = genai.Client(api_key=api_key)
 
     content = build_content_string(posts)
 
@@ -105,11 +103,16 @@ def summarize(posts: list[dict], api_key: str) -> str:
 
     try:
         prompt = USER_PROMPT_TEMPLATE.format(content=content)
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            config=types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+            ),
+            contents=prompt,
+        )
         summary = response.text.strip()
         logger.info(f"✅ Gemini summary generated ({len(summary)} chars)")
         return summary
     except Exception as e:
         logger.error(f"Gemini API error: {e}")
-        # Return a safe fallback so the run doesn't silently fail
         raise RuntimeError(f"Gemini summarization failed: {e}") from e
