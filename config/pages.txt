@@ -1,15 +1,49 @@
-# Instagram pages to track for stock research
-# ─────────────────────────────────────────────
-# Add one Instagram username per line (without the @ symbol).
-# Lines starting with # are ignored.
-# Example:
+# Instagram pages tracked for stock research
+# 34 unique accounts · auto-updated by digest system · last edited manually
+# ─────────────────────────────────────────────────────────────────────────
 
-# ── Market & Index ──────────────────────
-# zerodha
-# nse_india
+# ── Insights & Analysis ──────────────────
+insightswithnicky
+insightswallah
+the_doji
+simplistocks
+onesanika
 
-# ── Stock Research Accounts ─────────────
-# stockmarketindia
-# tradingwithsantosh
+# ── Swing & Trade Setups ─────────────────
+swingtradergarv
+swing_niveshak
+tradewithsagarr
+ek_tha_trader_
+ivaantrades
 
-# ── Add your pages below ─────────────────
+# ── Finance Educators ────────────────────
+shashank_udupa
+rahulkolkarr
+canikhilnainani
+financewithamam
+financebyvaishnavi
+
+# ── Wealth & Investing ───────────────────
+investwith_manan
+wealthsagaofficial
+nextbigthingbyavani
+lunark_io
+that100croreguy
+
+# ── Market News & Advisory ───────────────
+free_news_updates
+bullsandbears_with_divya
+shiningbulls_advisory
+stockmarketcaerus
+
+# ── Creators & Analysts ──────────────────
+karanveerkapoor_
+abhishekkarofficial
+entrepreneurkarthik
+zospringwala
+anupamtripathifinanceofficial
+officialbossinvestor
+sumeetsingghh_finance
+hardyandkishan
+ketanmaliofficial
+ca.rahuljadhav
