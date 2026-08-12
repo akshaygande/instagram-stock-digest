@@ -1,0 +1,64 @@
+name: Daily Stock Digest
+
+on:
+  schedule:
+    # Runs at 2:30 AM UTC every day = 8:00 AM IST (UTC+5:30)
+    - cron: '30 2 * * *'
+  # Also allows manual trigger from GitHub → Actions tab → "Run workflow"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # Needed to commit the updated state file back to the repo
+
+jobs:
+  digest:
+    name: Scrape → Transcribe → Summarize → Send
+    runs-on: ubuntu-latest
+    timeout-minutes: 60   # Kill the job if it hangs (shouldn't take more than 30m)
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 2. Python setup ───────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # ── 3. System deps (ffmpeg for audio extraction) ──────────────────────────
+      - name: Install system dependencies
+        run: sudo apt-get install -y ffmpeg
+
+      # ── 4. Python deps ────────────────────────────────────────────────────────
+      # Install CPU-only PyTorch first so Whisper doesn't pull in the huge GPU build
+      - name: Install CPU-only PyTorch
+        run: pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # ── 5. Run the digest ─────────────────────────────────────────────────────
+      - name: Run digest
+        env:
+          INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
+          INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
+
+      # ── 6. Commit updated state ───────────────────────────────────────────────
+      # Saves processed post IDs and Instagram session back to the repo.
+      # The [skip ci] tag prevents this commit from triggering another workflow run.
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state/processed_posts.json state/ig_session 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "chore: update digest state [skip ci]"
+          git push || true

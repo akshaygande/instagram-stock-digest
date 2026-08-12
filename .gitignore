@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temp media files (downloaded reels — deleted after transcription)
+tmp_media/
+
+# Local environment variables (never commit secrets)
+.env
+.env.local
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Instagram session file (committed in state/ for CI continuity)
+# state/ig_session   ← intentionally NOT ignored — CI needs this to persist

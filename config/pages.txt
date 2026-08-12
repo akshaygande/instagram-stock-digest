@@ -1,0 +1,15 @@
+# Instagram pages to track for stock research
+# ─────────────────────────────────────────────
+# Add one Instagram username per line (without the @ symbol).
+# Lines starting with # are ignored.
+# Example:
+
+# ── Market & Index ──────────────────────
+# zerodha
+# nse_india
+
+# ── Stock Research Accounts ─────────────
+# stockmarketindia
+# tradingwithsantosh
+
+# ── Add your pages below ─────────────────

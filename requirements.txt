@@ -1,0 +1,8 @@
+# Python dependencies for instagram-stock-digest
+# Note: torch is installed separately in CI with CPU-only flag to save space.
+# See .github/workflows/daily_digest.yml for the install order.
+
+instaloader>=4.13
+openai-whisper>=20231117
+google-generativeai>=0.8
+requests>=2.31
