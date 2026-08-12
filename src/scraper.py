@@ -30,6 +30,7 @@ class InstagramScraper:
             download_geotags=False,
             download_comments=False,
             save_metadata=False,
+            max_connection_attempts=1,  # Fails fast instead of sleeping for 11 mins
             quiet=True,
         )
         self._login()
